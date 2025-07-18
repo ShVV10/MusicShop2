@@ -11,7 +11,10 @@ SELECT name FROM artist
 WHERE name NOT LIKE '% %';
 
 SELECT name FROM track
-WHERE name ILIKE '%my%' OR name ILIKE '%мой%';
+WHERE name ILIKE 'my %' OR name ILIKE '% my'
+OR name ILIKE '% my %' OR name ILIKE 'my' 
+OR name ILIKE 'мой %' OR name ILIKE '% мой'
+OR name ILIKE '% мой %' OR name ILIKE 'мой';
 
 SELECT name, COUNT(artist_id) artist_c FROM music_genre mg
 JOIN genre_artist ga  ON mg.id = ga.genre_id
@@ -27,9 +30,12 @@ JOIN track t ON a.id = t.album_id
 GROUP BY a.name;
 
 SELECT a.name FROM artist a
-JOIN album_artist aa ON a.id = aa.artist_id
-JOIN album a2 ON aa.album_id  = a2.id
-WHERE year_of_release != 2020;
+WHERE a.name NOT IN (
+	SELECT a.name FROM artist a
+	JOIN album_artist aa ON a.id = aa.artist_id
+	JOIN album a2 ON aa.album_id  = a2.id
+	WHERE year_of_release = 2020
+);
 
 SELECT c.name FROM compilation c
 JOIN compilation_track ct ON c.id = ct.compilation_id
